@@ -1,3 +1,8 @@
+import threading
+
+import json
+
+
 class SingletonMeta(type):
     """
     这是一个单例元类，所有使用这个元类创建的类都会成为单例。
@@ -14,12 +19,32 @@ class SingletonMeta(type):
         return "SingletonMeta: Manages singleton instances."
 
 
-class Observation(metaclass=SingletonMeta):
+class ThreadSingletonMeta(type):
+    """
+    这是一个线程相关的单例元类，同一个线程中使用这个元类创建的类将只有一个实例，
+    而不同线程中的同一个类会有不同的实例。
+    """
+    def __init__(cls, *args, **kwargs):
+        cls.__instances = threading.local()
+        super().__init__(*args, **kwargs)
+
+    def __call__(cls, *args, **kwargs):
+        if not hasattr(cls.__instances, 'instance'):
+            cls.__instances.instance = super().__call__(*args, **kwargs)
+        return cls.__instances.instance
+
+    def __str__(cls):
+        return "ThreadSingletonMeta: Manages singleton instances per thread."
+
+
+class Observation(metaclass=ThreadSingletonMeta):
     def __init__(self):
         self.task = None
         self.previous_web_title = None
         self.previous_web_description = None
+        self.previous_web_url = None
         self.current_web_html = None
+        self.current_web_source = None
         self.current_web_url = None
         self.current_web_title = None
         self.current_web_action_history = []
@@ -42,11 +67,11 @@ class Observation(metaclass=SingletonMeta):
             f" Action History: {self.current_web_action_history}"
 
 
-class Memory(metaclass=SingletonMeta):
+class Memory(metaclass=ThreadSingletonMeta):
     def __init__(self):
         self.previous_actions = []
         self.plan = None
-        self.current_stage_in_plan=None
+        self.current_stage_in_plan = None
         self.milestones = []
 
     def update(self, **kwargs):
@@ -65,7 +90,7 @@ class Memory(metaclass=SingletonMeta):
             f" Milestones: {self.milestones}"
 
 
-class SelectorsStorage(metaclass=SingletonMeta):
+class SelectorsStorage(metaclass=ThreadSingletonMeta):
     def __init__(self):
         self.selector_list_btn = []
         self.selector_list_text = []
@@ -81,6 +106,33 @@ class SelectorsStorage(metaclass=SingletonMeta):
             f" Button Selectors: {self.selector_list_btn}\n" \
             f" Text Selectors: {self.selector_list_text}\n" \
             f" Select Selectors: {self.selector_list_select}"
+# 序列化函数
+
+
+def serialize_state(observation, memory, selectors_storage):
+    return (
+        json.dumps(observation.__dict__),
+        json.dumps(memory.__dict__),
+        json.dumps(selectors_storage.__dict__)
+    )
+
+# 反序列化函数
+
+
+def deserialize_state(observation_data, memory_data, selectors_storage_data):
+    observation = Observation()
+    memory = Memory()
+    selectors_storage = SelectorsStorage()
+
+    observation.__dict__ = json.loads(observation_data)
+    memory.__dict__ = json.loads(memory_data)
+    selectors_storage.__dict__ = json.loads(selectors_storage_data)
+
+    return observation, memory, selectors_storage
+
+
+def get_state(observation_data, memory_data, selectors_storage_data):
+    return json.loads(observation_data), json.loads(memory_data), json.loads(selectors_storage_data)
 
 
 # 使用示例
@@ -112,6 +164,7 @@ if __name__ == "__main__":
     # 输出: Complete the web-based task
     print(another_observation_reference.task)
     print(another_observation_reference.open_tabs)
+    print(another_observation_reference.current_web_html)
     observation.open_tabs.clear()
     print(another_observation_reference.open_tabs)
 

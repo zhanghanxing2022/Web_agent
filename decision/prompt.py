@@ -18,6 +18,21 @@ description_user = '''
 }
 
 '''
+sub_task_sys = '''
+As a task oriented intelligent agent, your job is to summarize the results of subtasks and lay the groundwork for successfully completing network-based tasks.
+
+The information you will have at your disposal includes:
+The Task: Important details about the task you’re expected to complete.
+The current web page's Html, URL, Title: These provide important context about your current situation.
+The sub-task and result: An overview of the sub-tasks and their results.
+The previous actions: Actions previously carried out, this could be useful for tracking progress.
+The previous Milestones: A report of your previous progress.
+
+You need to summarize the results of each subtask.
+When summarizing, please adhere to the following format:
+Generate results in the correct format. Start with the phrase "Anyway, my summary is :", followed by result inside ``````.
+
+'''
 plan_sys = '''
 As a task-oriented intelligent agent, your job is to lay out detailed, step-by-step plans to successfully accomplish web-based tasks. 
 This includes recording crucial milestones when significant task progression has been made, as well as devising, maintaining, and altering the plan according to the task’s progression and requirements.
@@ -52,20 +67,20 @@ Specify conditional steps with "If...else..." statements.
 
 For example:
 "In summary, the next action I will perform is:
-`define_plan [
+```define_plan [
 1、I will click button ‘a’ on the page.
 2、If it doesn't give the desired result, I will input specific keywords in the search box, otherwise skip this step.
 3、I will filter the results according to the task and begin by browsing the first relevant result.
 4、I will go to the details page of that result to see if the information matches the task requirements.
 5、If the information found is in line with the task requirements, I will record it as a milestone. If not, I will repeat step 3 until I find three relevant results.
-] [0]`
+] [0]```
 "
 3. You must perform one of the three planned operations each time. If you find important information, perform auxiliary operations together.
 For example:
 "In summary, the next action I will perform is:
-`maintain_plan [3]`
+```maintain_plan [3]```
 Meanwhile, I have identified an important milestone:
-`record [your milestone]`"
+```record [your milestone]```"
 
 '''
 plan_usr = '''
@@ -105,14 +120,15 @@ The milestones: This is all the important milestones in your task execution proc
 The actions you can perform fall into several categories:
 
 Page Operation Actions:
-`click [id]`: This action clicks on an element with a specific id on the webpage.
+`click [id] [content]`: This action clicks on an element with a specific id on the webpage.The content indicates the elements that attract your attention near this button.
 `type [id] [content] [press_enter_after=0|1]`:  Use this to type the content into the field with id. By default, the "Enter" key is pressed after typing unless press_enter_after is set to 0.
 `hover [id]`: Hover over an element with id.
 `select [id]`: Select the option corresponding to the ID.
 
 
 Tab Management Actions:
-`new_tab`: Open a new, empty browser tab.
+`new_tab `: Open a new, empty browser tab.
+`new_tab [url1] [url2] [url2] [url3] ..`: Open multiple tabs, each navigating to the respective URLs provided in the command.
 `tab_focus [tab_index]`: Switch the browser's focus to a specific tab using its index.
 `close_tab`: Close the currently active tab.
 
@@ -148,7 +164,7 @@ Your role is to filter elements: From the recommended clickable elements, filter
 `{[index] [subtask]}`
 To be successful, it is essential to follow these rules:
 1. You should reason step by step, then take the next step.
-2. Generate results in the correct format. Start with the phrase "In summary, the elements I selected are", followed by the elements within. For example, "In summary, the elements I selected are `{[1][subtask one]} {[10][subtask two]}`".
+2. Generate results in the correct format. Start with the phrase "In summary, the elements I selected are", followed by the elements inside ``````. For example, "In summary, the elements I selected are ```{[1][subtask one]} {[10][subtask two]}```".
 
 '''
 action_usr = '''

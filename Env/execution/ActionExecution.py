@@ -11,13 +11,17 @@ from selenium.webdriver.common.by import By
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 
-def execute_action(driver, action: Action):
+def execute_action(driver, action: Action, map=True):
     selectorsStorage = SelectorsStorage()
     if action.action_type == ActionType.CLICK:
-
-        element = driver.find_element(
-            By.CSS_SELECTOR, selectorsStorage.selector_list_btn[int(re.findall(r'\d+', action.kwargs['id'])[0])])
-        element.click()
+        if map:
+            element = driver.find_element(
+                By.CSS_SELECTOR, selectorsStorage.selector_list_btn[int(re.findall(r'\d+', action.kwargs['id'])[0])])
+            element.click()
+        else:
+            element = driver.find_element(
+                By.CSS_SELECTOR, action.kwargs['id'])
+            element.click()
     elif action.action_type == ActionType.TYPE:
         element = driver.find_element(
             By.CSS_SELECTOR, selectorsStorage.selector_list_text[int(re.findall(r'\d+', action.kwargs['id'])[0])])
@@ -34,6 +38,10 @@ def execute_action(driver, action: Action):
             "window.open('about:blank', 'new_tab');")
         driver.switch_to.window(
             driver.window_handles[-1])
+        for i in action.kwargs.get("url", []):
+            driver.get(action.kwargs['url'])
+            driver.switch_to.window(
+                driver.window_handles[-1])
     elif action.action_type == ActionType.TAB_FOCUS:
         driver.switch_to.window(
             driver.window_handles[int(action.kwargs['tab_index'])])

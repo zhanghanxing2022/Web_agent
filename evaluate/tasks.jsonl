@@ -1,0 +1,78 @@
+{
+  "id": "ehall-1",
+  "web": "https://ehall.fudan.edu.cn/ywtb-portal/fudan/index.html#/hall",
+  "tasks": "帮助我再这个网站上寻找“专业硕士交通补贴申请”服务,不需要登录",
+  "step": 2
+}
+{
+  "id": "ehall-2",
+  "web": "https://ehall.fudan.edu.cn/ywtb-portal/fudan/index.html#/hall",
+  "tasks": "帮助我寻找一些有助于帮助研究生缓解资金困难的服务",
+  "step": 4
+}
+{
+  "id": "ehall-3",
+  "web": "https://ehall.fudan.edu.cn/ywtb-portal/fudan/index.html#/hall",
+  "tasks": "复旦学院（本科生院）部门提供的服务中，访问量最高的三个服务分别是什么？",
+  "step": 9,
+  "login in": 1,
+  "special": 1
+}
+{
+  "id": "ehall-4",
+  "web": "https://ehall.fudan.edu.cn/ywtb-portal/fudan/index.html#/hall",
+  "tasks": "可以打羽毛球的场地有哪些？分别是什么？",
+  "step": 8,
+  "login in": 1,
+  "special": 1
+}
+{
+  "id": "ehall-5",
+  "web": "https://ehall.fudan.edu.cn/ywtb-portal/fudan/index.html#/hall",
+  "tasks": "2021-01-10至2024-01-10间，共充值多少次电费？总共充值了多少元？",
+  "step": 9,
+  "login in": 1,
+  "special": 1
+}
+{
+  "id": "Hollow Knight-1",
+  "web": "https://hkss.huijiwiki.com/wiki/%E9%A6%96%E9%A1%B5",
+  "tasks": "我现在刚刚开始游戏，什么物品都没有，我要怎么做才能见到骨钉大师席奥向他学习强力劈砍？",
+  "step": 5
+}
+{
+  "id": "Hollow Knight-2",
+  "web": "https://hkss.huijiwiki.com/wiki/%E9%A6%96%E9%A1%B5",
+  "tasks": "如何从苍绿之径前往王国边缘？",
+  "step": 15
+}
+{
+  "id": "Hollow Knight-3",
+  "web": "https://hkss.huijiwiki.com/wiki/%E9%A6%96%E9%A1%B5",
+  "tasks": "无忧旋律和格林之子两个护符有什么区别？",
+  "step": 4
+}
+{
+  "id": "Hollow Knight-4",
+  "web": "https://hkss.huijiwiki.com/wiki/%E9%A6%96%E9%A1%B5",
+  "tasks": "苦痛之路起点处和终点都有什么？",
+  "step": 2
+}
+{
+  "id": "Hollow Knight-5",
+  "web": "https://hkss.huijiwiki.com/wiki/%E9%A6%96%E9%A1%B5",
+  "tasks": "不考虑战士之梦，神居Boss，梦境 Boss，假 Boss，哪些是主线Boss？哪些是最终Boss？",
+  "step": 30
+}
+{
+  "id": "Hollow Knight-6",
+  "web": "https://hkss.huijiwiki.com/wiki/%E9%A6%96%E9%A1%B5",
+  "tasks": "谁是《空洞骑士》中真正的最终 Boss？",
+  "step": 8
+}
+{
+  "id": "Hollow Knight-7",
+  "web": "https://hkss.huijiwiki.com/wiki/%E9%A6%96%E9%A1%B5",
+  "tasks": "谁是《空洞骑士》中真正的最终 Boss？",
+  "step": 8
+}

@@ -1,9 +1,33 @@
 {
-    "img":["alt"],
-    "input":["placeholder","value"],
-    "textarea":["placeholder","value"],
-    "option":["selected"],
-    "-":["class"],
-    "*":["title","name","a"],
-    "remove":["script","style","meta","br","link","noscript"]
+    "img": [
+        "alt"
+    ],
+    "input": [
+        "placeholder",
+        "value"
+    ],
+    "textarea": [
+        "placeholder",
+        "value"
+    ],
+    "option": [
+        "selected"
+    ],
+    "-": [
+        "class"
+    ],
+    "*": [
+        "title",
+        "name",
+        "a",
+        "href"
+    ],
+    "remove": [
+        "script",
+        "style",
+        "meta",
+        "br",
+        "link",
+        "noscript"
+    ]
 }

@@ -1,7 +1,6 @@
 from bs4 import BeautifulSoup  # 需要提前安装 beautifulsoup4 和 lxml
 from bs4 import BeautifulSoup
 import requests
-
 # 假设 soup 是 BeautifulSoup 对象，已经加载了 HTML 内容
 
 
@@ -12,23 +11,29 @@ def GetPage(url):
     return response.text
 
 
-def find_similar_elements(css_selector, soup):
+def find_similar_elements(css_selector, html):
+    soup = BeautifulSoup(html, 'html.parser')
+
     original_element = soup.select(css_selector)[0]  # 获取 CSS 选择器匹配的第一个元素
     similar_elements = []  # 用来存储找到的相似元素
+    similar_elements_css = []
+    otree = select_child(soup, original_element)
+
     all_elements = soup.find_all(True)  # 获取页面上的所有元素
 
     for elem in all_elements:
-        if Similar(soup, original_element, elem):  # 假定 Similar 函数已适配 BeautifulSoup 对象
+        stree = select_child(soup, elem)
+        if Similar(original_element, elem, otree, stree):  # 假定 Similar 函数已适配 BeautifulSoup 对象
             similar_elements.append(elem)
+            similar_elements_css.append(stree)
             print(elem)
 
-    return similar_elements
+    return similar_elements,similar_elements_css
 
 
 # 以下函数需要根据实际的 Similar 函数进行适配和改写
 
 # 假设你已经有了一个 BeautifulSoup 对象 `soup`
-# soup = BeautifulSoup(your_html_content_here, 'lxml')
 
 def select_child(soup, child, verbose=False):
     # 获取元素的直接父元素
@@ -91,7 +96,7 @@ def EditDist(xx, yy):
     return f[-1][-1]
 
 
-def Similar(soup, original_element, current_element):
+def Similar(original_element, current_element, ntree, stree):
     if original_element.name != current_element.name:
         return False
     nodec = original_element.attrs.get('class', [])
@@ -105,9 +110,8 @@ def Similar(soup, original_element, current_element):
         clsdist = 1 - len(comm) / max(len(nodec), len(sibc))
     else:
         clsdist = 1
-    ntree = select_child(soup, original_element)
-    stree = select_child(soup, current_element)
     treedist = EditDist(ntree, stree)
+
     treedist = treedist / min(len(ntree), len(stree))
     if treedist * clsdist < 0.25:
         return True
@@ -116,11 +120,10 @@ def Similar(soup, original_element, current_element):
 
 if __name__ == '__main__':
     url = 'https://cs.fudan.edu.cn/24826/list.htm'
-    url ="https://hkss.huijiwiki.com/wiki/Boss_(%E7%A9%BA%E6%B4%9E%E9%AA%91%E5%A3%AB)#Boss"
-    url="https://terraria.wiki.gg/zh/wiki/Terraria_Wiki"
-    selector='#wp_news_w6 > ul > li > ul > li.news.n4.clearfix > div > a'
-    selector='#mw-content-text > div > div:nth-child(6) > div:nth-child(1) > a'
-    selector="#box-items > div.main-heading > div.hgroup > div > a"
+    # url = "https://hkss.huijiwiki.com/wiki/Boss_(%E7%A9%BA%E6%B4%9E%E9%AA%91%E5%A3%AB)#Boss"
+    # url = "https://terraria.wiki.gg/zh/wiki/Terraria_Wiki"
+    selector = '#wp_news_w6 > ul > li > ul > li.news.n4.clearfix > div > a'
+    # selector = '#mw-content-text > div > div:nth-child(6) > div:nth-child(1) > a'
+    # selector = "#box-items > div.main-heading > div.hgroup > div > a"
     page = GetPage(url)
-    soup = BeautifulSoup(page, 'html.parser')
-    find_similar_elements(selector, soup)
+    find_similar_elements(selector, page)

@@ -1,13 +1,11 @@
+
+
+import re
 import sys
 import os
-
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
-
-from decision.SingletonMeta import Memory
-import re
 from action import Action, ActionType
-
-
+from decision.SingletonMeta import Memory
 # 此处os.path.dirname()可以获得上一级目录，也就是当前文件或文件夹的父目录
 # 将目录加入到sys.path即可生效，可以帮助python定位到文件（注：这种方法仅在运行时生效，不会对环境造成污染）
 
@@ -21,7 +19,7 @@ class OutputParser:
         return llm_output
 
 
-class PlanOperationProcessor:
+class PlanOperationProcessor(OutputParser):
     def __init__(self):
         self.memory = Memory()
 
@@ -34,7 +32,7 @@ class PlanOperationProcessor:
         self.record = re.compile(r'`record \[(.*?)\]`')
 
     def process(self, operation_str):
-        
+
         record = re.search(self.record, operation_str)
         if record:
             self._process_record(record.group(1))
@@ -106,11 +104,18 @@ class ActionOutputParser(OutputParser):
         args_list = re.findall(pattern, args_str)
 
         args_dict = {}
-        if action_type == ActionType.CLICK or action_type == ActionType.SELECT:
+        if action_type == ActionType.CLICK:
+            if len(args_list) != 2:
+                raise ValueError(
+                    f"Invalid number of arguments for action type {action_type}.")
+            args_dict['id'] = args_list[0]
+            args_dict['content'] = args_list[1]
+        elif action_type == ActionType.SELECT:
             if len(args_list) != 1:
                 raise ValueError(
                     f"Invalid number of arguments for action type {action_type}.")
             args_dict['id'] = args_list[0]
+
         elif action_type == ActionType.TYPE:
             if not (len(args_list) == 2 or len(args_list) == 3):
                 raise ValueError(
@@ -136,7 +141,11 @@ class ActionOutputParser(OutputParser):
                 raise ValueError(
                     f"Invalid number of arguments for action type {action_type}.")
             args_dict['answer'] = args_list[0]
-        elif action_type in [ActionType.NEW_TAB, ActionType.CLOSE_TAB, ActionType.GO_BACK, ActionType.GO_FORWARD]:
+        elif action_type == ActionType.NEW_TAB:
+            # 如果没有提供任何 URL，打开一个新的空白标签
+            if len(args_list) != 0:
+                args_dict['url'] = args_list
+        elif action_type in [ActionType.CLOSE_TAB, ActionType.GO_BACK, ActionType.GO_FORWARD]:
             if args_list:
                 raise ValueError(
                     f"Invalid number of arguments for action type {action_type}.")
@@ -145,13 +154,39 @@ class ActionOutputParser(OutputParser):
         return args_dict
 
 
-# 示例使用
+class SelectParser(OutputParser):
+    def __init__(self):
+        super().__init__()
+
+    def process(self, llm_output):
+        # Process the LLM output using regex
+        parsed_elements = []
+
+        try:
+            # Pattern inside the brackets { [ index ] [ subtask ] }
+            pattern = r'\{\s*\[\s*(\d+)\s*\]\s*\[\s*(.+?)\s*\]\s*\}'
+            matches = re.findall(pattern, llm_output)
+
+            for match in matches:
+                index, subtask = match
+                # Append a tuple of the index and subtask to the parsed_elements list
+                parsed_elements.append((int(index), subtask))
+
+        except (IndexError, ValueError) as e:
+            print(f"Error while parsing LLM output: {e}")
+
+        # Return the parsed elements
+        return parsed_elements
+
+
+        # 示例使用
 if __name__ == "__main__":
     parser = ActionOutputParser()
-    llm_output_click = "In summary, the next action I will perform is ```click [1234]```."
+    llm_output_click = "In summary, the next action I will perform is ```click [1234] [购买]```."
     llm_output_type = "In summary, the next action I will perform is ```type [input_field] [text to type]```."
     llm_output_select = "In summary, the next action I will perform is ```select [option1]```."
     llm_output_new_tab = "In summary, the next action I will perform is ```new_tab```."
+    llm_output_new_tab = "In summary, the next action I will perform is ```new_tab [https://example.com] [https://example.com] [https://example.com]```."
     llm_output_tab_focus = "In summary, the next action I will perform is ```tab_focus [2]```."
     llm_output_close_tab = "In summary, the next action I will perform is ```close_tab```."
     llm_output_goto = "In summary, the next action I will perform is ```goto [https://example.com]```."
@@ -175,12 +210,12 @@ if __name__ == "__main__":
 
     # Simulate receiving an operation string
     operation_str = "`define_plan [1. Click the submit button. 2. Check the confirmation message.] [0]`"
-    processor.process_operation(operation_str)
+    processor.process(operation_str)
 
     memory = Memory()
 
     operation_str_2 = "`record [User logged in successfully]` `maintain_plan [1]`"
 
-    processor.process_operation(operation_str_2)
+    processor.process(operation_str_2)
 
     print(memory)

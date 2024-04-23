@@ -1,0 +1,20 @@
+{
+  "tasks": [
+    {
+      "url": "https://www.8000ers.com/",
+      "tasks": "What is the difference of meters between the highest point of Shisha Pangma and Cho Oyu?"
+    },
+    {
+      "url": "https://www.kayak.com/",
+      "tasks": "Rent a car from Brooklyn from noon on April 8th to noon on April 10th, and ask for the cheapest one"
+    },
+    {
+      "url": "https://huggingface.co/",
+      "tasks": "What was the download volume of the Qwen/Qwen1.5-72B-Chat model last month on the Huggingface website?"
+    },
+    {
+      "url": "https://huggingface.co/",
+      "tasks": "What is the most popular model download volume on the Huggingface website now?"
+    }
+  ]
+}
